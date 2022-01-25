@@ -1,0 +1,4 @@
+﻿  LSTM.cpp
+D:\Vlasov\!Programs\Visual_Studio\С#\LSTM\LSTM.cpp(212,25): warning C4244: инициализация: преобразование "__int64" в "unsigned int", возможна потеря данных
+D:\Vlasov\!Programs\Visual_Studio\С#\LSTM\LSTM.cpp(222,38): warning C4244: аргумент: преобразование "__int64" в "size_t", возможна потеря данных
+  LSTM.vcxproj -> D:\Vlasov\!Programs\Visual_Studio\С#\LSTM\Debug\LSTM.exe
