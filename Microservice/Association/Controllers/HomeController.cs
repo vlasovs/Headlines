@@ -121,7 +121,11 @@ namespace Association.Controllers
                 else
                 {
                     cost = 1;
-                    if (deep == 1) break;
+                    if (deep == 1)
+                    {
+                        p1.cost=cost;
+                        break;
+                    }
                 }
                 p1.cost = cost;
             }
