@@ -84,16 +84,25 @@ namespace Association.Controllers
             if (res == "")
             {
                 return Json(0);
-            }
-            res = res.ToUpper();
+            }            
             List<object> p = new List<object>();
-            string[] words = res.Split(" ");
+            string[] words = res.Replace(".","").Replace(",", "").Replace("\"", "").Replace("\'", "").Replace("(", "").Replace(")", "").Split(" ");
+            res = res.ToUpper();
+            List<string> words_2=new List<string>();
+
             foreach (var w in words)
             {
+                if (w == "") continue;
+                bool find = false;
                 List<int> bid;
                 su.FindAutoValues(out bid, w);
+                String error="";
                 foreach (int id1 in bid)
-                    su.FindSystem(ref p, id1);
+                    find |= su.FindSystem(ref p, id1, ref error);
+                if (!find)
+                {
+                    words_2.Add(w.ToUpper());
+                }
             }
             foreach (var o in p)
             {
@@ -102,7 +111,7 @@ namespace Association.Controllers
                 if (res.IndexOf(p1.av.ToUpper()) == -1)
                 {
                     double maxcost = 0;
-                    foreach (var w in words)
+                    foreach (var w in words_2)
                     {
                         double c = string_compare(p1.av, w);
                         if (maxcost < c) maxcost = c;
@@ -112,6 +121,7 @@ namespace Association.Controllers
                 else
                 {
                     cost = 1;
+                    if (deep == 1) break;
                 }
                 p1.cost = cost;
             }

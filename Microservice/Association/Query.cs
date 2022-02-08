@@ -97,7 +97,7 @@ namespace Tutorial.MySiteUtils
             return Error;
         }
         
-        public String FindSystem(ref List<object> p, int bid)
+        public bool FindSystem(ref List<object> p, int bid, ref String error)
         {
             string host = "db.z-price";
             int port = 3306;
@@ -112,7 +112,9 @@ namespace Tutorial.MySiteUtils
             q.CommandText = "SELECT ProductID,AV FROM products WHERE BrandId=@bid;";
             q.Parameters.Add("@bid", MySqlDbType.String).Value = bid;
 
-            String Error = "";
+            bool find = false; 
+
+            error = "";
             try
             {
                 conn.Open();
@@ -131,16 +133,17 @@ namespace Tutorial.MySiteUtils
                             {
                                 p.Add(p1);
                             }
+                            find = true;
                         }
                     }
                 }
             }
             catch (Exception exc)
             {
-                Error = "ReadFromDB " + q.CommandText + " - Error: " + exc.Message;
+                error = "ReadFromDB " + q.CommandText + " - Error: " + exc.Message;
             }
             conn.Close();
-            return Error;
+            return find;
         }
     }
 }
