@@ -72,7 +72,7 @@ namespace Association.Controllers
             return Math.Exp(-cost[s1.Length, s2.Length]);
         }
 
-        public JsonResult Index(int id=-1, int deep = 10)
+        public JsonResult Index(int id=-1, int deep = 1)
         {
             if (id == -1)
             {
