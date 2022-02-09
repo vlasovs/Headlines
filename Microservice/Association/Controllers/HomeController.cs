@@ -33,30 +33,40 @@ namespace Association.Controllers
         {
             return 1;
         }
-        static double string_compare(string s1, string s2)
+        static double string_compare(string s1, string s2, out string mask)
         {
-            int MATCH = 0;
-            int INSERT = 1;
-            int DELETE = 2;
+            const int MATCH = 0;
+            const int INSERT = 1;
+            const int DELETE = 2;
             int[] opt = { 0, 0, 0 };
             int[,] cost = new int[s1.Length + 1, s2.Length + 1];
-
-            for (int i = 0; i < s1.Length + 1; i++)
+            int[,] move = new int[s1.Length + 1, s2.Length + 1];
+            int i, j;
+            for (i = 0; i < s1.Length + 1; i++)
             {
-                for (int j = 0; j < s2.Length + 1; j++)
+                for (j = 0; j < s2.Length + 1; j++)
                 {
                     if (i == 0)
+                    {
                         cost[i, j] = j;
+                        move[i, j] = INSERT;
+                    }
                     else if (j == 0)
+                    {
                         cost[i, j] = i;
+                        move[i, j] = DELETE;
+                    }
                     else
+                    {
                         cost[i, j] = 0;
+                        move[i, j] = MATCH;
+                    }
                 }
             }
 
-            for (int i = 1; i < s1.Length + 1; i++)
+            for (i = 1; i < s1.Length + 1; i++)
             {
-                for (int j = 1; j < s2.Length + 1; j++)
+                for (j = 1; j < s2.Length + 1; j++)
                 {
                     opt[MATCH] = cost[i - 1, j - 1] + match(s1[i - 1], s2[j - 1]);
                     opt[INSERT] = cost[i, j - 1] + indel(s2[j - 1]);
@@ -65,8 +75,23 @@ namespace Association.Controllers
                     for (int k = 1; k < 3; k++)
                     {
                         if (opt[k] < cost[i, j])
+                        {
                             cost[i, j] = opt[k];
+                            move[i, j] = k;
+                        }
                     }
+                }
+            }
+
+            i = s1.Length;
+            j = s2.Length;
+            mask = "";
+            while (i>0 || j>0)
+            {
+                switch (move[i, j]) {
+                    case MATCH: if (cost[i, j] == cost[i - 1, j - 1]) mask = "C" + mask; else mask = "I" + mask; i--; j--; break;
+                    case INSERT: mask = "+" + mask; j--; break;
+                    case DELETE: mask = "-" + mask; i--; break;
                 }
             }
             return Math.Exp(-cost[s1.Length, s2.Length]);
@@ -74,6 +99,7 @@ namespace Association.Controllers
 
         public JsonResult Index(int id=-1, int deep = 1)
         {
+            string mask;
             if (id == -1)
             {
                 return Json(0);
@@ -84,7 +110,7 @@ namespace Association.Controllers
             if (res == "")
             {
                 return Json(0);
-            }            
+            }
             List<object> p = new List<object>();
             string[] words = res.Replace(".","").Replace(",", "").Replace("\"", "").Replace("\'", "").Replace("(", "").Replace(")", "").Split(" ");
             res = res.ToUpper();
@@ -108,25 +134,39 @@ namespace Association.Controllers
             {
                 product p1 = o as product;
                 double cost = 0;
-                if (res.IndexOf(p1.av.ToUpper()) == -1)
-                {
-                    double maxcost = 0;
-                    foreach (var w in words_2)
+                string a = p1.av.ToUpper();
+                string[] avs = a.Split(",");
+                foreach (var av in avs)
+                    if (res.IndexOf(av) == -1)
                     {
-                        double c = string_compare(p1.av, w);
-                        if (maxcost < c) maxcost = c;
+                        if (av.IndexOf(" ") == -1)
+                        {
+                            double maxcost = 0;
+                            foreach (var w in words_2)
+                            {
+                                double c = string_compare(av, w, out mask);
+                                if (maxcost < c) maxcost = c;
+                            }
+                            cost += maxcost;
+                        }
+                        else
+                        {
+                            double maxcost = 0;
+                            int delta = res.Length - av.Length;
+                            if (delta < 0) delta = 0;
+                            for (int i = 0; i <= delta; i++)
+                            {
+                                string w = res.Substring(i, av.Length);
+                                double c = string_compare(av, w, out mask);
+                                if (maxcost < c) maxcost = c;
+                            }
+                            cost += maxcost;
+                        }
                     }
-                    cost = maxcost;
-                }
-                else
-                {
-                    cost = 1;
-                    if (deep == 1)
+                    else
                     {
-                        p1.cost=cost;
-                        break;
+                        cost += 1;
                     }
-                }
                 p1.cost = cost;
             }
             p.Sort((x, y) => -(x as product).cost.CompareTo((y as product).cost));
