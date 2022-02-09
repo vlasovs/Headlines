@@ -138,7 +138,8 @@ namespace Association.Controllers
                 string[] avs = a.Split("\n");
                 foreach (var av in avs)
                 {
-                    if (av == "") continue;                    
+                    if (av == "") continue;
+                    if (av.Replace(" ","") == "") continue;
                     if (res.IndexOf(av) == -1)
                     {
                         if (av.IndexOf(" ") == -1)
