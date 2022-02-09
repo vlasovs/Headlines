@@ -135,7 +135,7 @@ namespace Association.Controllers
                 product p1 = o as product;
                 double cost = 0;
                 string a = p1.av.ToUpper();
-                string[] avs = a.Split("\n");
+                string[] avs = a.Replace("\r","").Split("\n");
                 foreach (var av in avs)
                 {
                     if (av == "") continue;
