@@ -99,104 +99,101 @@ namespace Association.Controllers
 
         public JsonResult Index(int id=-1, int deep = 1)
         {
-            string mask;
-            if (id == -1)
+            try
             {
-                return Json(0);
-            }
-            SiteUtils su = new SiteUtils();
-            string res;
-            su.ReadSiteIdentity(out res, id);
-            if (res == "")
-            {
-                return Json(0);
-            }
-            List<object> p = new List<object>();
-            string[] words = res.Replace(".","").Replace(",", "").Replace("\"", "").Replace("\'", "").Replace("(", "").Replace(")", "").Split(" ");
-            res = res.ToUpper();
-            List<string> words_2=new List<string>();
-
-            foreach (var w in words)
-            {
-                if (w == "") continue;
-                bool find = false;
-                List<int> bid;
-                su.FindAutoValues(out bid, w);
-                String error="";
-                foreach (int id1 in bid)
-                    find |= su.FindSystem(ref p, id1, ref error);
-                if (!find)
+                string mask;
+                if (id == -1)
                 {
-                    words_2.Add(w.ToUpper());
+                    return Json(0);
                 }
-            }
-            foreach (var o in p)
-            {
-                product p1 = o as product;
-                double cost = 0;
-                string a = p1.av.ToUpper();
-                string[] avs = a.Replace("\r","").Split("\n");
-                foreach (var av in avs)
+                SiteUtils su = new SiteUtils();
+                string res;
+                su.ReadSiteIdentity(out res, id);
+                if (res == "")
                 {
-                    if (av == "") continue;
-                    if (av.Replace(" ", "") == "") continue;
-                    int k = res.IndexOf(av);
-                    if ((k > -1) && (k == 0 || res[k] == ' ') && (k + av.Length < res.Length || res[k + av.Length] == ' '))
+                    return Json(0);
+                }
+                List<object> p = new List<object>();
+                string[] words = res.Replace(".", "").Replace(",", "").Replace("\"", "").Replace("\'", "").Replace("(", "").Replace(")", "").Split(" ");
+                res = res.ToUpper();
+                List<string> words_2 = new List<string>();
+
+                foreach (var w in words)
+                {
+                    if (w == "") continue;
+                    bool find = false;
+                    List<int> bid;
+                    su.FindAutoValues(out bid, w);
+                    String error = "";
+                    foreach (int id1 in bid)
+                        find |= su.FindSystem(ref p, id1, ref error);
+                    if (!find)
                     {
-                        cost = 1;
+                        words_2.Add(w.ToUpper());
                     }
-                    else
+                }
+                foreach (var o in p)
+                {
+                    product p1 = o as product;
+                    double cost = 0;
+                    string a = p1.av.ToUpper();
+                    string[] avs = a.Replace("\r", "").Split("\n");
+                    foreach (var av in avs)
                     {
-                        if (av.IndexOf(" ") == -1)
+                        if (av == "") continue;
+                        if (av.Replace(" ", "") == "") continue;
+                        int k = res.IndexOf(av);
+                        if ((k > -1) && (k == 0 || res[k] == ' ') && (k + av.Length < res.Length || res[k + av.Length] == ' '))
                         {
-                            double maxcost = 0;
-                            foreach (var w in words_2)
-                            {
-                                double c = string_compare(av, w, out mask);
-                                if (maxcost < c) maxcost = c;
-                            }
-                            cost += maxcost;
+                            cost = 1;
                         }
                         else
                         {
-                            double maxcost = 0;
-                            int delta = res.Length - av.Length;
-                            if (delta < 0) delta = 0;
-                            int start = res.IndexOf(av[0]);
-                            while (start > -1 && start <= delta)
+                            if (av.IndexOf(" ") == -1)
                             {
-                                string w = res;
-                                if (w.Length > av.Length) w = w.Substring(start, av.Length);
-                                double c = string_compare(av, w, out mask);
-                                if (maxcost < c) maxcost = c;
-                                start = res.IndexOf(av[0], start + 1);
+                                double maxcost = 0;
+                                foreach (var w in words_2)
+                                {
+                                    double c = string_compare(av, w, out mask);
+                                    if (maxcost < c) maxcost = c;
+                                }
+                                cost += maxcost;
                             }
-                            cost += maxcost;
+                            else
+                            {
+                                double maxcost = 0;
+                                int delta = res.Length - av.Length;
+                                if (delta < 0) delta = 0;
+                                int start = res.IndexOf(av[0]);
+                                while (start > -1 && start <= delta)
+                                {
+                                    string w = res;
+                                    if (w.Length > av.Length) w = w.Substring(start, av.Length);
+                                    double c = string_compare(av, w, out mask);
+                                    if (maxcost < c) maxcost = c;
+                                    start = res.IndexOf(av[0], start + 1);
+                                }
+                                cost += maxcost;
+                            }
                         }
                     }
+                    p1.cost = cost;
                 }
-                p1.cost = cost;
-            }
-            p.Sort((x, y) => -(x as product).cost.CompareTo((y as product).cost));
+                p.Sort((x, y) => -(x as product).cost.CompareTo((y as product).cost));
 
-            if (deep > p.Count) deep = p.Count;
-            product[] ps = new product[deep];
+                if (deep > p.Count) deep = p.Count;
+                product[] ps = new product[deep];
 
-            for (int i = 0; i < deep; i++)
+                for (int i = 0; i < deep; i++)
+                {
+                    var o = p[i] as product;
+                    ps[i] = o;
+                }
+                return Json(ps);
+            } catch (Exception e)
             {
-                var o = p[i] as product;
-                ps[i] = o;
+                return Json(e.Message);
             }
-            return Json(ps);
-        }
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        }        
     }
 }

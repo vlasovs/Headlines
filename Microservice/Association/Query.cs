@@ -51,6 +51,7 @@ namespace Tutorial.MySiteUtils
             catch (Exception exc)
             {
                 Error = "ReadFromDB " + q.CommandText + " - Error: " + exc.Message;
+                throw (new Exception(Error));
             }
             conn.Close();
             return Error;
@@ -92,6 +93,7 @@ namespace Tutorial.MySiteUtils
             catch (Exception exc)
             {
                 Error = "ReadFromDB " + q.CommandText + " - Error: " + exc.Message;
+                throw (new Exception(Error));
             }
             conn.Close();
             return Error;
@@ -141,6 +143,7 @@ namespace Tutorial.MySiteUtils
             catch (Exception exc)
             {
                 error = "ReadFromDB " + q.CommandText + " - Error: " + exc.Message;
+                throw (new Exception(error));
             }
             conn.Close();
             return find;
