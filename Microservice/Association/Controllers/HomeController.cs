@@ -135,8 +135,10 @@ namespace Association.Controllers
                 product p1 = o as product;
                 double cost = 0;
                 string a = p1.av.ToUpper();
-                string[] avs = a.Split(",");
+                string[] avs = a.Split("\n");
                 foreach (var av in avs)
+                {
+                    if (av == "") continue;                    
                     if (res.IndexOf(av) == -1)
                     {
                         if (av.IndexOf(" ") == -1)
@@ -154,12 +156,14 @@ namespace Association.Controllers
                             double maxcost = 0;
                             int delta = res.Length - av.Length;
                             if (delta < 0) delta = 0;
-                            for (int i = 0; i <= delta; i++)
-                            {
-                                string w = res.Substring(i, av.Length);
-                                double c = string_compare(av, w, out mask);
-                                if (maxcost < c) maxcost = c;
-                            }
+                            int k = res.IndexOf(av[0]);
+                            if (k > -1) for (int i = k; i <= delta; i++)
+                                {
+                                    string w = res;
+                                    if (w.Length > av.Length) w = w.Substring(i, av.Length);
+                                    double c = string_compare(av, w, out mask);
+                                    if (maxcost < c) maxcost = c;
+                                }
                             cost += maxcost;
                         }
                     }
@@ -167,6 +171,7 @@ namespace Association.Controllers
                     {
                         cost += 1;
                     }
+                }
                 p1.cost = cost;
             }
             p.Sort((x, y) => -(x as product).cost.CompareTo((y as product).cost));
