@@ -139,8 +139,13 @@ namespace Association.Controllers
                 foreach (var av in avs)
                 {
                     if (av == "") continue;
-                    if (av.Replace(" ","") == "") continue;
-                    if (res.IndexOf(av) == -1)
+                    if (av.Replace(" ", "") == "") continue;
+                    int k = res.IndexOf(av);
+                    if ((k > -1) && (k == 0 || res[k] == ' ') && (k + av.Length < res.Length || res[k + av.Length] == ' '))
+                    {
+                        cost = 1;
+                    }
+                    else
                     {
                         if (av.IndexOf(" ") == -1)
                         {
@@ -157,20 +162,17 @@ namespace Association.Controllers
                             double maxcost = 0;
                             int delta = res.Length - av.Length;
                             if (delta < 0) delta = 0;
-                            int k = res.IndexOf(av[0]);
-                            if (k > -1) for (int i = k; i <= delta; i++)
-                                {
-                                    string w = res;
-                                    if (w.Length > av.Length) w = w.Substring(i, av.Length);
-                                    double c = string_compare(av, w, out mask);
-                                    if (maxcost < c) maxcost = c;
-                                }
+                            int start = res.IndexOf(av[0]);
+                            while (start > -1 && start <= delta)
+                            {
+                                string w = res;
+                                if (w.Length > av.Length) w = w.Substring(start, av.Length);
+                                double c = string_compare(av, w, out mask);
+                                if (maxcost < c) maxcost = c;
+                                start = res.IndexOf(av[0], start + 1);
+                            }
                             cost += maxcost;
                         }
-                    }
-                    else
-                    {
-                        cost += 1;
                     }
                 }
                 p1.cost = cost;
