@@ -8,8 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Tutorial.MySiteUtils;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Association.Controllers
 {

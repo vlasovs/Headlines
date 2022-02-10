@@ -53,14 +53,9 @@ D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Associati
 D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.dll
 D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.Streams.dll
 D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\K4os.Hash.xxHash.dll
-D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\Microsoft.DotNet.PlatformAbstractions.dll
-D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyModel.dll
-D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\Microsoft.Extensions.PlatformAbstractions.dll
 D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\MySql.Data.dll
 D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\Ubiety.Dns.Core.dll
 D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\ZstdNet.dll
-D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\Nancy.dll
-D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
 D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\System.Configuration.ConfigurationManager.dll
 D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\System.Runtime.CompilerServices.Unsafe.dll
 D:\Vlasov\!Programs\Visual_Studio\С#\Headlines\Headlines\Microservice\Association\bin\Debug\netcoreapp3.1\System.Security.Cryptography.ProtectedData.dll
