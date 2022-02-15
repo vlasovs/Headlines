@@ -5,7 +5,7 @@ using Tutorial.SqlConn;
 using System.Data.Common;
 
 namespace Tutorial.MySiteUtils
-{   
+{
     public class product
     {
         public int id { get; set; }
@@ -14,11 +14,11 @@ namespace Tutorial.MySiteUtils
 
     }
     class SiteUtils
-    {        
+    {
         public String ReadSiteIdentity(out string res, int Id)
         {
             res = "";
-                        
+
             string host = "db.z-price";
             int port = 3306;
             string database = "sites";
@@ -32,7 +32,7 @@ namespace Tutorial.MySiteUtils
             q.CommandText = "SELECT SiteIdentity FROM urls_2 WHERE Id=@Id";
             q.Parameters.Add("@Id", MySqlDbType.Int32).Value = Id;
 
-            String Error = "";            
+            String Error = "";
             try
             {
                 conn.Open();
@@ -98,7 +98,7 @@ namespace Tutorial.MySiteUtils
             conn.Close();
             return Error;
         }
-        
+
         public bool FindSystem(ref List<object> p, int bid, ref String error)
         {
             string host = "db.z-price";
@@ -112,9 +112,9 @@ namespace Tutorial.MySiteUtils
             MySqlCommand q = conn.CreateCommand();
 
             q.CommandText = "SELECT ProductID,AV FROM products WHERE BrandId=@bid;";
-            q.Parameters.Add("@bid", MySqlDbType.String).Value = bid;
+            q.Parameters.Add("@bid", MySqlDbType.Int32).Value = bid;
 
-            bool find = false; 
+            bool find = false;
 
             error = "";
             try
@@ -146,6 +146,71 @@ namespace Tutorial.MySiteUtils
                 throw (new Exception(error));
             }
             conn.Close();
+            return find;
+        }       
+
+        public bool FindDuplicate(ref List<int> p, int id, ref String error)
+        {
+            string host = "db.z-price";
+            int port = 3306;
+            string database = "z-price";
+            string username = "dev";
+            string password = "sadfa324easd";
+            string characterset = "utf8";
+            bool find = false;
+            error = "";
+            try
+            {                
+                MySqlConnection conn = DBMySQLUtils.GetDBConnection(host, port, database, username, password, characterset);
+                conn.Open();
+                MySqlCommand q = conn.CreateCommand();
+                q.CommandText = "SELECT `AV` FROM products WHERE `ProductID`=@id;";
+                q.Parameters.Add("@id", MySqlDbType.Int32).Value = id;
+                string avs = "";
+                using (DbDataReader reader = q.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            avs = reader.GetString(0);                            
+                        }
+                    }
+                }
+                SortedSet<int> pids = new SortedSet<int>();
+                var s = avs.Split("\n");
+                foreach (var av in s)
+                {
+                    if (av == "") continue;
+                    MySqlCommand q2 = conn.CreateCommand();
+                    q2.CommandText = "SELECT `ProductID` FROM products WHERE `AV` LIKE CONCAT('%', @av, '%');";
+                    q2.Parameters.Add("@av", MySqlDbType.String).Value = av;
+                    using (DbDataReader reader = q2.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                int pid = reader.GetInt32(0);
+                                if (pid != id)
+                                {
+                                    pids.Add(pid);
+                                    find = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                conn.Close();
+                foreach (int i in pids) {
+                    p.Add(i);
+                }
+            }
+            catch (Exception exc)
+            {
+                error = "Error: " + exc.Message;
+                throw (new Exception(error));                
+            }            
             return find;
         }
     }
